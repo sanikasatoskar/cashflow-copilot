@@ -33,3 +33,11 @@ for inv in invoices:
 df = pd.DataFrame(rows)
 st.metric("Total invoiced", f"${df['Amount ($)'].sum():,.2f}" if not df.empty else "$0")
 st.dataframe(df)
+from google import genai
+
+ai = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+reply = ai.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="Say hi to my PayPal hackathon app in one short sentence.",
+)
+st.write(reply.text)
