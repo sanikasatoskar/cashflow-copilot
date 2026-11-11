@@ -37,7 +37,7 @@ from google import genai
 
 ai = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 reply = ai.models.generate_content(
-    model="gemini-2.5-flash",
+    model="gemini-3.8-flash",
     contents="Say hi to my PayPal hackathon app in one short sentence.",
 )
 st.write(reply.text)
