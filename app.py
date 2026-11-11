@@ -33,11 +33,19 @@ for inv in invoices:
 df = pd.DataFrame(rows)
 st.metric("Total invoiced", f"${df['Amount ($)'].sum():,.2f}" if not df.empty else "$0")
 st.dataframe(df)
+
 from google import genai
+import time
 
 ai = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
-reply = ai.models.generate_content(
-    model="gemini-3.8-flash",
-    contents="Say hi to my PayPal hackathon app in one short sentence.",
-)
-st.write(reply.text)
+
+def ask_ai(prompt):
+    # Try up to 3 times; if the main model is busy, fall back to the lighter one
+    for model in ["gemini-3.8-flash", "gemini-3.8-flash", "gemini-flash-lite-latest"]:
+        try:
+            return ai.models.generate_content(model=model, contents=prompt).text
+        except Exception:
+            time.sleep(2)
+    return "⚠️ The AI is busy right now. Please try again in a minute."
+
+st.write(ask_ai("Say hi to my PayPal hackathon app in one short sentence."))
